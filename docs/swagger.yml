@@ -1,0 +1,5724 @@
+openapi: '3.0.2'
+info:
+  title: RecyThing
+  version: '1.0'
+  description: "API Documentation Capstone Project RecyThing Kelompok 2"
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: homepage
+    description: Endpoint for user get homepage
+  - name: dashboard
+    description: Endpoint for admin dashboard
+  - name: authentication
+    description: Endpoint for user register/login
+  - name: user
+    description: Endpoint for user account
+  - name: reporting
+    description: Endpoint for user reporting littering & rubbish
+  - name: faqs
+    description: Endpoint for user get data faqs
+  - name: user tasks
+    description: Endpoint for user doing task
+  - name: chatbot (ReMin AI)
+    description: Endpoint for user asking question to chatbot
+  - name: about us
+    description: Endpoint for user to get data about us by category
+  - name: achievements
+    description: Endpoint for user get achievement
+  - name: videos
+    description: Endpoint for user get video
+  - name: articles
+    description: Endpoint for user get data article
+
+  - name: manage users
+    description: Endpoint for admin manage users account
+  - name: manage reports
+    description: Endpoint for admin manage reports
+  - name: manage articles
+    description: Endpoint for admin manage articles
+  - name: manage achievements
+    description: Endpoint for admin manage achievements
+  - name: manage admins
+    description: Endpoint for super admin manage admins
+  - name: manage tasks
+    description: Endpoint for admin manage tasks
+  - name: manage custom data
+    description: Endpoint for admin manage custom data
+  - name: manage videos
+    description: Endpoint for admin manage videos
+  - name: approval tasks
+    description: Endpoint for admin approval task
+
+  - name: leaderboards
+    description: Endpoint for leaderboards 
+  - name: categories
+    description: Endpoint for categories 
+  
+    
+paths:
+  /register:
+    post:
+      tags:
+        - authentication
+      summary: Register a new user
+      description: Register new account
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+        required: true
+      responses:
+        '201':
+          description: Register Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: user successfully register! OTP sent to your email
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: U00001
+                      name:
+                        type: string
+                        example: U00001
+                      email:
+                        type: string
+                        example: john.doe@gmail.com
+                      is_verified:
+                        type: boolean
+                        example: false
+        '400':
+          description: Register Failed (validation error / email already exists)
+  
+  /verify-otp:
+    post:
+      tags:
+        - authentication
+      summary: Verify OTP
+      description: Verify the OTP sent to the user email after registration.
+      operationId: verifyOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The email of the user
+                  example: john.doe@gmail.com
+                otp:
+                  type: string
+                  description: The OTP sent to the user's email
+                  example: 678901
+      responses:
+        '200':
+          description: OTP successfully verified, user registration complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: OTP successfully verified. Registration complete!
+        '400':
+          description: Invalid OTP or user ID
+
+  /resend-otp:
+    post:
+      tags:
+        - authentication
+      summary: Resend OTP
+      description: Resend OTP sent to the user email.
+      operationId: resendOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The email of the user
+                  example: john.doe@gmail.com
+      responses:
+        '200':
+          description: OTP successfully verified, user registration complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: new otp sent to your email!
+        '400':
+          description: Invalid email or user already verified
+  /login:
+    post:
+      tags:
+        - authentication
+      summary: Login User
+      description: Login account
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Login Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: login successfully!
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: john.doe@gmail.com
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNSMDAwMSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNzE2ODI3NDE1fQ.o4rXzRLdWGS3iqtznZg9hhJyOklWyrNUA0MgOmUkfis
+        '400':
+          description: Login Failed (invalid email / password)
+
+  /admin/login:
+    post:
+      tags:
+        - authentication
+      summary: Login Super admin / Admin
+      description: Login account
+      operationId: loginAdmin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Login Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: login successfully!
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: john.doe@gmail.com
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNSMDAwMSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNzE2ODI3NDE1fQ.o4rXzRLdWGS3iqtznZg9hhJyOklWyrNUA0MgOmUkfis
+        '400':
+          description: Login Failed (invalid email / password)
+
+  /user/profile:
+    get:
+      tags:
+        - user
+      summary: Get user profile information
+      description: Get user profile information
+      operationId: getUserProfile
+      responses:
+        '200':
+          description: Get profile Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      id: 
+                        type: string
+                        example: USR0001  
+                      name: 
+                        type: string
+                        example: John Doe  
+                      email: 
+                        type: string
+                        example: john.doe@gmail.com  
+                      phone_number: 
+                        type: string
+                        example: 6289511223366  
+                      point: 
+                        type: integer
+                        example: 0  
+                      gender: 
+                        type: string
+                        example: laki-laki 
+                      birth_date: 
+                        type: string
+                        example: 1990-01-01T07:00:00+07:00
+                      address: 
+                        type: string
+                        example: Jalan Soedirman
+                      picture_url:
+                        type: string
+                        example: http://example.com/yourimage.png
+        '400':
+          description: Get Failed (token invalid)
+      security:
+        - Bearer: []
+        
+    put:
+      tags:
+        - user
+      summary: Edit user profile information
+      description: Edit user profile information
+      operationId: editUserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Update Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: user updated!
+        '400':
+          description: Update Failed (validation error dll)
+      security:
+        - Bearer: []
+
+  /user/uploadAvatar:
+    post:
+      tags:
+        - user
+      summary: Upload Avatar User
+      description: Upload Avatar On User Profile
+      operationId: uploadAvatarUser
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: image
+                  description: Image avatar anda
+        required: true
+      responses:
+        '200':
+          description: Upload Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: upload successfully!
+                  data:
+                    type: object
+                    properties:
+                      avatar_url:
+                        type: string
+                        example: http://example.com/yourimage.png
+        '400':
+          description: Upload Failed (filetype error, filesize to large error, dll)
+      security:
+        - Bearer: []
+
+  /report:
+    post:
+      tags:
+        - reporting
+      summary: Create a new report for rubbish or littering
+      description: Endpoint for Report rubbish or Report Littering
+      operationId: createReport
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                report_type:
+                  type: string
+                  description: Type of the report (required)
+                title:
+                  type: string
+                  description: Title of the report (max 100 characters)
+                description:
+                  type: string
+                  description: Description of the report (required)
+                waste_type:
+                  type: string
+                  description: Type of waste (required)
+                waste_materials:
+                  type: array
+                  items:
+                    type: string
+                  description: List of waste materials
+                latitude:
+                  type: number
+                  format: float
+                  description: Latitude coordinate (required)
+                longitude:
+                  type: number
+                  format: float
+                  description: Longitude coordinate (required)
+                address:
+                  type: string
+                  description: Address of the report (required)
+                city:
+                  type: string
+                  description: City of the report (required)
+                province:
+                  type: string
+                  description: Province of the report (required)
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: List of image files
+        required: true
+      responses:
+        '201':
+          description: Report Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: report created!
+                  data:
+                    $ref: '#/components/schemas/ReportResponse'
+        '400':
+          description: Invalid request, Upload Image Failed (filetype error, filesize to large error, dll)
+      security:
+        - Bearer: []
+
+    get:
+      tags:
+        - reporting
+      summary: Get all history user reports limit 10
+      description: Endpoint for Get all reports from user history
+      operationId: historyUserReports
+      responses:
+        '200':
+          description: Get History User Reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Status internal error               
+      security:
+        - Bearer: []
+
+  /users:
+    get:
+      tags:
+        - manage users
+      summary: View all users
+      description: Endpoint admin to view all users with pagination.
+      operationId: viewAllUsers
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of users per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 100
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      users:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: U00001
+                            name:
+                              type: string
+                              example: "John Doe"
+                            email:
+                              type: string
+                              example: "john.doe@gmail.com"
+                            phone_number:
+                              type: string
+                              example: 089511223344
+                            points:
+                              type: integer
+                              example: 100
+                            gender:
+                              type: string
+                              example: laki-laki
+                            birth_date:
+                              type: string
+                              format: date
+                              example: 1990-01-01
+                            address:
+                              type: string
+                              example: 123 Main Street, City, Country
+                            profile_picture:
+                              type: string
+                              example: http://example.com/yourimage.png
+        '400':
+          description: Invalid param request
+
+  /user/{userId}:
+    get:
+      tags:
+        - manage users
+      summary: Get user by id
+      description: Endpoint user to get user by id
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user to be deleted
+          example: USR0001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: User successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: USR0001
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@gmail.com"
+                      phone_number:
+                        type: string
+                        example: 089511223344
+                      points:
+                        type: integer
+                        example: 100
+                      gender:
+                        type: string
+                        example: laki-laki
+                      birth_date:
+                        type: string
+                        format: date
+                        example: 1990-01-01
+                      address:
+                        type: string
+                        example: 123 Main Street, City, Country
+                      profile_picture:
+                        type: string
+                        example: http://example.com/yourimage.png
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - manage users
+      summary: Delete user
+      description: Endpoint admin to delete a user
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user to be deleted
+          example: U00001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: User successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: user successfully deleted!
+        '404':
+          description: User not found
+
+  /reports:
+    get:
+      tags:
+        - manage reports
+      summary: View all reports
+      description: Endpoint admin to view all reports with filters and pagination
+      operationId: viewAllReports
+      parameters:
+        - name: page
+          in: query
+          description: Page number of the result set
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: report_type
+          in: query
+          description: Type of the report (littering or rubbish) -- OPTIONAL
+          required: false
+          schema:
+            type: string
+            enum: [littering, rubbish]
+            example: littering
+        - name: status
+          in: query
+          description: Status of the report (need review, approve, or reject)  -- OPTIONAL
+          required: false
+          schema:
+            type: string
+            enum: [need review, approve, reject]
+            example: need review
+        - name: date
+          in: query
+          description: Date of the report in YYYY-MM-DD format  -- OPTIONAL
+          required: false
+          schema:
+            type: string
+            format: date
+            example: 2024-05-24
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: OK
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 50
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      reports:
+                        type: array
+                        items:
+                          type: object
+                          $ref: '#/components/schemas/ReportResponse'
+        '400':
+          description: Invalid request parameters dll
+  /report/{reportId}:
+    put:
+      tags:
+        - manage reports
+      summary: Verify report
+      description: Endpoint admin to verify a report (approve or reject)
+      operationId: verifyReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the report to be verified
+          example: RPT0001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [approve, reject]
+                  description: New status for the report
+                  example: approve
+                reason:
+                  type: string
+                  description: Reason if report rejected
+                  example: Laporan sampah kamu dianggap tidak sesuai dan tidak dapat ditindaklanjutkan
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Report status successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: report status successfully updated!
+        '400':
+          description: Invalid request data
+        '404':  
+          description: Report not found
+
+  /faqs:
+    get:
+      tags:
+        - faqs
+      summary: Get all FAQs
+      description: Endpoint user for get all faqs
+      operationId: getFaqs
+      responses:
+        '200':
+          description: Get all success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+  /faqs/category:
+    get:
+      tags:
+        - faqs
+      summary: Get FAQs by category
+      description: Endpoint user for get faqs by category
+      operationId: getFaqsByCategory
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+            example: point dan level
+          description: The name of the FAQ category to retrieve,
+                       valid input (profil, littering, rubbish, misi, lokasi sampah, poin dan level, artikel)
+      responses:
+        '200':
+          description: Get all data by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+  /faqs/search:
+    get:
+      tags:
+        - faqs
+      summary: Search FAQs by keyword
+      description: Searches for FAQs that match a specific keyword
+      operationId: getFaqsByKeyword
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+            example: ikon
+          description: The keyword to search for FAQs.
+      responses:
+        '200':
+          description: Get all data by keyword
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+
+  /article:
+    post:
+      tags:
+        - manage articles
+      summary: Add new article
+      description: Endpoint admin to add a new article
+      operationId: addArticle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+      security:
+        - Bearer: []
+      responses:
+        '201':
+          description: Article successfully created!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: article created!
+        '400':
+          description: Invalid request data
+
+  /article/{articleId}:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: Get article data by id
+      description: Endpoint user to get article by id
+      operationId: getArticleById
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get data article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
+    put:
+      tags:
+        - manage articles
+      summary: Edit article
+      description: Endpoint admin to edit an existing article.
+      operationId: editArticle
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the article to be edited
+          example: ART0001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Article successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: article updated!
+        '404':
+          description: Article not found
+        '400':
+          description: Invalid request data 
+    delete:
+      tags:
+        - manage articles
+      summary: Delete article
+      description: Endpoint admin to delete an article.
+      operationId: deleteArticle
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the article to be deleted
+          example: ART0001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Article successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: article successfully deleted!
+        '404':
+          description: Article not found
+  
+  /article/upload:
+    post:
+      tags:
+        - manage articles
+      summary: Upload image for article
+      description: Endpoint admin to upload an image
+      operationId: uploadArticleImage
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: image
+                  description: Article image anda
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Upload successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: article updated!
+                  data:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: http://example.com/image.png
+        '400':
+          description: Invalid request data 
+
+
+  /achievements:
+    get:
+      tags:
+        - manage achievements
+      summary: Get all achievements
+      description: Endpoint admin to get all achievements/badges.
+      operationId: viewAllAchievements
+      responses:
+        '200':
+          description: Successfully retrieved achievements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Achievement'                    
+  
+  /achievements/{achievementId}:
+    get:
+      tags:
+        - manage achievements
+      summary: Get achievement by id
+      description: Endpoint admin to get an existing achievement's data by id
+      operationId: getAchievementById
+      parameters:
+        - name: achievementId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the achievement to be updated
+          example: 1
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get data achievement by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    $ref: '#/components/schemas/Achievement'
+        '404':
+          description: Achievement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: achievement not found
+
+    patch:
+      tags:
+        - manage achievements
+      summary: Update data achievement
+      description: Endpoint admin for update data achievement.
+      operationId: updateAchievement
+      parameters:
+        - name: achievementId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the badge to be updated
+          example: ACH0001
+      security:
+        - Bearer: []          
+      requestBody:
+        required: false
+        content:
+          multipart/form-data::
+            schema:
+              type: object
+              properties:
+                level:
+                  type: string
+                  description: New level for the achievement
+                  example: platinum
+                target_point:
+                  type: integer
+                  description: New target point for the badge
+                  example: 1200
+                badge:
+                  type: string
+                  format: binary
+                  description: Image of the badge
+                  example: image
+      responses:
+        '200':
+          description: Achievement successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: aAchievement successfully updated!
+        '404': 
+          description: Achievement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: achievement not found
+        '400':
+          description: Invalid request data
+    # delete:
+    #   tags:
+    #     - manage achievements
+    #   summary: Delete an achievement
+    #   description: Endpoint admin to delete an achievement/badge.
+    #   operationId: deleteAchievement
+    #   parameters:
+    #     - name: achievementId
+    #       in: path
+    #       required: true
+    #       schema:
+    #         type: string
+    #       description: ID of the badge to be updated
+    #       example: ACH0001
+    #   security:
+    #     - Bearer: []
+    #   responses:
+    #     '200':
+    #       description: Achievement successfully deleted
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               code:
+    #                 type: integer
+    #                 example: 200
+    #               message:
+    #                 type: string
+    #                 example: achievement successfully deleted!
+    #     '404': 
+    #       description: Achievement not found
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               code:
+    #                 type: integer
+    #                 example: 404
+    #               message:
+    #                 type: string
+    #                 example: achievement not found
+
+  /admins:
+    get:
+      tags:
+        - manage admins
+      summary: Get all admins
+      description: Endpoint super admin to get all admins data
+      operationId: viewAllAdmins
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of admins per page
+          example: 10
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Successfully get admins
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    $ref: '#/components/schemas/Admin'
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  total_data:
+                    type: integer
+                    example: 1
+                  total_page:
+                    type: integer
+                    example: 1
+                      
+  /admin/profile:
+    get:
+      tags:
+        - manage admins
+      summary: Get admin data from JWT Token
+      description: Endpoint super admin to get admin data from login
+      operationId: getDataAdmin
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Admin'
+  /admin:        
+    post:
+      tags:
+        - manage admins
+      summary: Add new admin
+      description: Endpoint super admin to add a new admin.
+      operationId: addAdmin
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Admin'
+      responses:
+        '201':
+          description: Admin successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: success
+        '400':
+          description: Invalid request data
+  
+  /admin/{adminId}:
+    get:
+      tags:
+        - manage admins
+      summary: Get an admin by id
+      description: Endpoint for super admin to get an existing admin's data by id
+      operationId: getAdminById
+      security:
+        - Bearer: []
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the admin to be updated
+          example: AD0001
+      responses:
+        '200':
+          description: Get data admin by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Admin'
+    patch:
+      tags:
+        - manage admins
+      summary: Update an admin
+      description: Endpoint for super admin to update an existing admin's data.
+      operationId: updateAdmin
+      security:
+        - Bearer: []
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the admin to be updated
+          example: AD0001
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EditAdmin'
+      responses:
+        '200':
+          description: Admin successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: data successfully updated
+        '400':
+          description: Invalid request data
+        '404':
+          description: Admin not found
+    delete:
+      tags:
+        - manage admins
+      summary: Delete an admin
+      description: Endpoint super admin to delete an admin.
+      operationId: deleteAdmin
+      security:
+        - Bearer: []
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the admin to be deleted
+          example: AD0001
+      responses:
+        '200':
+          description: Admin successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: data successfully deleted!
+        '404':
+          description: Admin not found
+  /tasks:
+    post:
+      tags:
+        - manage tasks
+      summary: Create Task
+      description: Endpoint admin to create a new task.
+      operationId: createTask
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data::
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
+                  type: string
+                  format: binary
+                  example: "thumbnail.jpg"
+                    
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: task created!
+                  data:
+                    type: object
+                    properties:
+                      task_id:
+                        type: string
+                        example: TM0001
+                      title:
+                        type: string
+                        example: "Task 1"
+                      description:
+                        type: string
+                        example: "Task 1 description"
+                      thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      start_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      end_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      point:
+                        type: integer
+                        example: 100
+                      task_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                              example: "Step 1"
+                            description:
+                              type: string
+                              example: "Step 1 description"
+                        example:
+                          - title: "Step 1"
+                            description: "Step 1 description"
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: invalid request data
+    get:
+      tags:
+        - manage tasks
+      summary: View all tasks
+      description: Endpoint admin to view all tasks with filters and pagination
+      operationId: viewAllTasks
+      security:
+        - Bearer: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 10
+            default: 10
+        - name: end-date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "desc"
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            example: true
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      tasks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: TM0001
+                            title:
+                              type: string
+                              example: "Task 1"
+                            description:
+                              type: string
+                              example: "Task 1 description"
+                            thumbnail:
+                              type: string
+                              example: "https://example.com/thumbnail.jpg"
+                            start_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            end_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            point:
+                              type: integer
+                              example: 100
+                            task_creator:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: U00001
+                                name:
+                                  type: string
+                                  example: "John Doe" 
+                            task_steps:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  title:
+                                    type: string
+                                    example: "Step 1"
+                                  description:
+                                    type: string
+                                    example: "Step 1 description"
+                                example:
+                                  - title: "Step 1"
+                                    description: "Step 1 description"
+                            page:
+                              type: integer
+                              example: 1
+                            limit:
+                              type: integer
+                              example: 10
+                            total_data:
+                              type: integer
+                              example: 1
+                            total_page:
+                              type: integer
+                              example: 1
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: invalid page or limit'
+  /tasks/{taskId}:
+    get:
+      tags:
+        - manage tasks
+      summary: View task detail
+      description: Endpoint admin to view task detail by task id
+      operationId: viewTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the task to be viewed
+          example: TM0001
+      responses:
+        '200':
+          description: Task detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: TM0001
+                      title:
+                        type: string
+                        example: "Task 1"
+                      description:
+                        type: string
+                        example: "Task 1 description"
+                      thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      start_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      end_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      point:
+                        type: integer
+                        example: 100
+                      task_creator:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: U00001
+                          name:
+                            type: string
+                            example: "John Doe" 
+                      task_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                              example: "Step 1"
+                            description:
+                              type: string
+                              example: "Step 1 description"
+                          example:
+                            - title: "Step 1"
+                              description: "Step 1 description"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: task not found
+    patch:
+      tags:
+        - manage tasks
+      summary: Update task
+      description: Endpoint admin to update task
+      operationId: updateTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the task to be updated
+          example: TM0001
+      requestBody:
+        required: false
+        content:
+          multipart/form-data::
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
+                  type: string
+                  format: binary
+                  example: "thumbnail.jpg"
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: TM0001
+                      title:
+                        type: string
+                        example: "Task 1"
+                      description:
+                        type: string
+                        example: "Task 1 description"
+                      thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      start_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      end_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      point:
+                        type: integer
+                        example: 100
+                      task_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                              example: "Step 1"
+                            description:
+                              type: string
+                              example: "Step 1 description"
+                          example:
+                            - title: "Step 1"
+                              description: "Step 1 description"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: task not found
+    delete:
+      tags:
+        - manage tasks
+      summary: Delete task
+      description: Endpoint admin to delete task
+      operationId: deleteTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the task to be deleted
+          example: TM0001
+      responses:
+        '200':
+          description: Task successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: data deleted successfully
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: task not found
+  /user/tasks:
+    get:
+      tags:
+        - user tasks
+      summary: Get user tasks
+      description: Endpoint user to get all tasks
+      operationId: getUserTasks
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get user tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: TM0001
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    thumbnail:
+                      type: string
+                      example: "https://example.com/thumbnail.jpg"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    status:
+                      type: boolean
+                      example: true
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+
+  /user/tasks/{taskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user task
+      description: Endpoint user to get task by task id
+      operationId: getUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the task
+          example: TM0001
+      responses:
+        '200':
+          description: Get user task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: TM0001
+                      title:
+                        type: string
+                        example: "Task 1"
+                      description:
+                        type: string
+                        example: "Task 1 description"
+                      thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      start_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      end_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      point:
+                        type: integer
+                        example: 100
+                      status:
+                        type: boolean
+                        example: true
+                      task_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            title:
+                              type: string
+                              example: "Step 1"
+                            description:
+                              type: string
+                              example: "Step 1 description"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: task not found
+    post:
+      tags:
+        - user tasks
+      summary: create user task
+      description: Endpoint user to create task or start task
+      operationId: createUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the task
+          example: TM0001
+      responses:
+        '201':
+          description: Create user task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "in_progress"
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: CH0001
+                          title:
+                            type: string
+                            example: "Challenge 1"
+                          description:
+                            type: string
+                            example: "Challenge 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          point:
+                            type: integer
+                            example: 100
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                            
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+                            
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: task not found
+  /user/task/{userTaskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user task detail
+      description: Endpoint user to get detail user task
+      operationId: getUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: UT0001
+          description: ID of user task
+          example: UT0001
+      responses:
+        '200':
+          description: Get user task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "in_progress"
+                      status_accepted:
+                        type: string
+                        example: "need_review"
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: CH0001
+                          title:
+                            type: string
+                            example: "Challenge 1"
+                          description:
+                            type: string
+                            example: "Challenge 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          point:
+                            type: integer
+                            example: 100
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                  
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+
+  /user-current/steps:
+    put:
+      tags:
+        - user tasks
+      summary: Update user current step
+      description: Endpoint user to update task step if status progress is in_progress
+      operationId: updateUserCurrentStep
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_task_id:
+                  type: string
+                  example: UT0001
+                task_step_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "in_progress"
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: CH0001
+                          title:
+                            type: string
+                            example: "Challenge 1"
+                          description:
+                            type: string
+                            example: "Challenge 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          point:
+                            type: integer
+                            example: 100
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                            
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: true
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+  
+  /user-current/tasks/in-progress:
+    get:
+      tags:
+        - user tasks
+      summary: Get user current task in-progress
+      description: Endpoint user to get current task
+      operationId: getUserCurrentTask
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get user current task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    code:
+                      type: integer
+                      example: 200
+                    message:
+                      type: string
+                      example: success
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: UT0001
+                          status_progress:
+                            type: string
+                            example: "in_progress"
+                          status_accepted:
+                            type: string
+                            example: "need_review"  
+                          reason_rejected:
+                            type: string
+                            example: ""
+                          point: 
+                            type: integer
+                            example: 100
+                          task_challenge:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: TM0001 
+                              title:
+                                type: string
+                                example: "Task 1"
+                              description:
+                                type: string
+                                example: "Task 1 description"
+                              thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              start_date:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                              end_date:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                              status_task:
+                                type: boolean
+                                example: true
+                              task_steps:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    title:
+                                      type: integer
+                                      example: "Step 1"
+                                    description:
+                                      type: integer
+                                      example: "Step 1 description"
+                          user_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                user_task_challenge_id:
+                                  type: string
+                                  example: UT0001
+                                task_step_id:
+                                  type: integer
+                                  example: 1
+                                completed:
+                                  type: boolean
+                                  example: false
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: user has no current task
+
+  /user-current/tasks/{userTaskId}:
+    post:   
+      tags:
+        - user tasks     
+      summary: complete user current task
+      description: Endpoint user to complete user current task
+      operationId: completeUserCurrentTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user task
+          example: UT0001
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: "image description"
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  example: ["image1.jpg", "image2.jpg"]
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "done"
+                      status_accepted:
+                        type: string
+                        example: "need_review"
+                      point: 
+                        type: integer
+                        example: 100
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: TM0001 
+                          title:
+                            type: string
+                            example: "Task 1"
+                          description:
+                            type: string
+                            example: "Task 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: user has no current task
+    put:
+      tags:
+        - user tasks
+      summary: Update user task
+      description: Endpoint user to update user current task  if status approve is reject
+      operationId: updateUserCurrentTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user task
+          example: UT0001
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: "image description"
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  example: ["image1.jpg", "image2.jpg"]
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "done"
+                      status_accepted:
+                        type: string
+                        example: "need_review"
+                      point:
+                        type: integer
+                        example: 100
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: TM0001 
+                          title:
+                            type: string
+                            example: "Task 1"
+                          description:
+                            type: string
+                            example: "Task 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+  /user-current/task/{userTaskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user current task by id
+      description: Endpoint user to get user current task by id for update if status approve is reject
+      operationId: getUserCurrentTaskByID
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user task
+          example: UT0001
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      title_task:
+                        type: string
+                        example: "Task 1"
+                      user_name:
+                        type: string
+                        example: "John Doe"
+                      images:
+                        type: array
+                        items:
+                          type: string
+                          example: "https://example.com/image.jpg"
+                      description:
+                          type: string
+                          example: "Description image"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found'
+                        
+  /user-current/tasks/done:
+    get:
+      tags:
+        - user tasks
+      summary: Get user current task done
+      description: Endpoint user to get user current task done
+      operationId: getUserCurrentTaskDone
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: UT0001
+                        status_progress:
+                          type: string
+                          example: "done"
+                        status_accepted:
+                          type: string
+                          example: "need_review"  
+                        reason_rejected:
+                          type: string
+                          example: ""
+                        point: 
+                          type: integer
+                          example: 100
+                        task_challenge:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: TM0001 
+                            title:
+                              type: string
+                              example: "Task 1"
+                            description:
+                              type: string
+                              example: "Task 1 description"
+                            thumbnail:
+                              type: string
+                              example: "https://example.com/thumbnail.jpg"
+                            start_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            end_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            status_task:
+                              type: boolean
+                              example: true
+                            task_steps:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  title:
+                                    type: integer
+                                    example: "Step 1"
+                                  description:
+                                    type: integer
+                                    example: "Step 1 description"
+                        user_steps:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              user_task_challenge_id:
+                                type: string
+                                example: UT0001
+                              task_step_id:
+                                type: integer
+                                example: 1
+                              completed:
+                                type: boolean
+                                example: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: user has no current task
+
+  /user/tasks/rejected/{userTaskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user task rejected
+      description: Endpoint user to get user task rejected
+      operationId: getUserTaskRejected
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user task
+          example: UT0001
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "done"
+                      status_accepted:
+                        type: string
+                        example: "reject"  
+                      reason:
+                        type: string
+                        example: "reason rejected"
+                      point: 
+                        type: integer
+                        example: 100
+                      task_challenge:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: TM0001 
+                            title:
+                              type: string
+                              example: "Task 1"
+                            description:
+                              type: string
+                              example: "Task 1 description"
+                            thumbnail:
+                              type: string
+                              example: "https://example.com/thumbnail.jpg"
+                            start_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            end_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            status_task:
+                              type: boolean
+                              example: true
+                            task_steps:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  title:
+                                    type: integer
+                                    example: "Step 1"
+                                  description:
+                                    type: integer
+                                    example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: true
+                      
+                
+
+  /user-current/tasks/history:
+    get:
+      tags:
+        - user tasks
+      summary: Get user current task history point
+      description: Endpoint user to get user current task history point
+      operationId: getUserCurrentTaskHistoryPoint
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    total_point:
+                      type: integer
+                      example: 100
+                    data_history_point:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: UT0001
+                          title_task:
+                            type: string
+                            example: "Task 1"
+                          point:
+                            type: integer
+                            example: 100
+                          accepted_at:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user has no history point
+  /custom-datas:
+    get:
+      tags:
+        - manage custom data     
+      summary: Get all custom data with pagination
+      description: Endpoint admin get all custom data 
+      operationId: getAllCustomData
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of custom data per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 10
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      custom-datas:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CustomData' 
+        '500':
+          description: Internal server error
+  /custom-data/{dataId}:
+    get:
+      tags:
+        - manage custom data     
+      summary: Get custom data by id
+      description: Endpoint admin get custom data by id 
+      operationId: getCustomDataByID
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CustomData'
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+    put:
+      tags:
+        - manage custom data     
+      summary: Update custom data by id
+      description: Endpoint admin update custom data by id 
+      operationId: updateCustomDataByID
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDataInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: custom data updated!
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+    delete:
+      tags:
+        - manage custom data     
+      summary: Delete custom data by id
+      description: Endpoint admin delete custom data by id 
+      operationId: deleteCustomDataByID
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: custom data deleted!
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+  /custom-data:
+    post:
+      tags:
+        - manage custom data     
+      summary: Create new custom data
+      description: Endpoint admin create new custom data  
+      operationId: postCustomData
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDataInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: custom data created!
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CustomData'
+        '400':
+          description: Bad Request / Validation Error
+        '500':
+          description: Internal server error
+  
+  /remin-ai:
+    post:
+      tags:
+        - chatbot (ReMin AI)
+      summary: Asking question
+      description: Endpoint user to ask AI  
+      operationId: postReminAI
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: Bagaimana cara saya mengelola beberapa sampah anorganik
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      question:
+                        type: string
+                        example: Bagaimana cara saya mengelola beberapa sampah anorganik
+                      answer_ai: 
+                        type: string
+                        example: Untuk mengelola sampah anorganik seperti kaca, logam, dan beberapa jenis plastik, Anda dapat memulai dengan melakukan pemisahan sampah berdasarkan jenis bahan. Pastikan untuk membersihkan sampah tersebut sebelum membuangnya. Selanjutnya, Anda bisa mengirimkan sampah anorganik tersebut ke fasilitas daur ulang yang sesuai agar dapat didaur ulang menjadi produk baru. Proses daur ulang sampah anorganik ini melibatkan langkah-langkah seperti penghancuran, pemurnian, dan transformasi menjadi produk daur ulang. Dengan mengelola sampah anorganik secara benar, Anda turut berkontribusi dalam melestarikan lingkungan dan mengurangi jumlah sampah yang berakhir di tempat pembuangan akhir.\n\nSaya tidak tahu jawabannya karena pertanyaan Anda tidak terkait dengan aplikasi kami.
+        '500':
+          description: Internal server error
+  /videos/categories:
+    get:
+      tags:
+        - manage videos
+      summary: Get All Categories
+      description: Get All Categories
+      operationId: getAllCategories
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "berbahaya"
+                      
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: error get all categories
+
+  /videos/data:
+    post:
+      tags:
+        - manage videos
+      summary: Add Data Video
+      description: Add Data Video
+      operationId: addDataVideo
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                thumbnail:
+                  type: string
+                  format: binary
+                  example: "thumbnail.jpg"
+
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: data video created
+                  data:
+                    type: string
+                    example: null
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: invalid request
+    get:
+      tags:
+        - manage videos
+      summary: Get All Data Video pagination
+      description: Get All Data Video with pagination
+      operationId: getAllDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of data per page
+          example: 10
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Video Title"
+                        description:
+                          type: string
+                          example: "Video Description"
+                        url_thumbnail:
+                          type: string
+                          example: "https://example.com/thumbnail.jpg"
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  total_data:
+                    type: integer
+                    example: 1
+                  total_page:
+                    type: integer
+                    example: 1
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: error get all data video
+  /videos/data/{videoId}:
+    get:
+      tags:
+        - manage videos
+      summary: Get Data Video by id
+      description: Get Data Video details by id
+      operationId: getDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: videoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID of video
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Video Title"
+                      description:
+                        type: string
+                        example: "Video Description"
+                      url_thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      link_video:
+                        type: string
+                        example: "https://example.com/video.mp4"
+                      viewer:
+                        type: integer
+                        example: 1000
+                      content_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "tips"
+                      waste_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "berbahaya"
+                    
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+    patch:
+      tags:
+        - manage videos
+      summary: Update Data Video
+      description: Update Data Video
+      operationId: updateDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: videoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID of video
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                        
+                thumbnail:
+                  type: string
+                  format: binary
+                  example: "thumbnail.jpg"
+                  
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: data video updated
+        "404":
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+    delete:
+      tags:      
+        - manage videos
+      summary: Delete Data Video
+      description: Endpoint for delete data video
+      operationId: deleteDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: videoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID of video
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: data video deleted
+        "404":
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+    
+  /videos:
+    get:
+      tags:
+        - videos
+      summary: Get All Data Video
+      description: Endpoint user for get all data video
+      operationId: getAllDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of data
+          example: 10
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Video Title"
+                        description:
+                          type: string
+                          example: "Video Description"
+                        url_thumbnail:
+                          type: string
+                          example: "https://example.com/thumbnail.jpg"
+                        link_video:
+                          type: string
+                          example: "https://example.com/video.mp4"
+                        viewer:
+                          type: integer
+                          example: 1000
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "berbahaya"
+        '500':
+          description: Status internal error'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: internal server error
+  /videos/search:
+    get:
+      tags:
+        - videos
+      summary: Search Videos by keyword
+      description: Searches for videos that match a specific keyword
+      operationId: getVideosBykeyword
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+            example: plastik
+          description: The keyword to search for videos.
+      responses:
+        '200':
+          description: Get all data by keyword
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    title:
+                      type: string
+                      example: "Video plastik"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    url_thumbnail:
+                      type: string
+                      example: "https://example.com/thumbnail.jpg"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    viewer:
+                      type: integer
+                      example: 1000
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "plastik"
+        '404':
+          description: Video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+
+  /video/{videoId}:
+    get:
+      tags:
+        - videos
+      summary: Get Data Video by id
+      description: Get Data Video details by id
+      operationId: getDataVideo
+      security:
+        - Bearer: []
+      parameters:
+        - name: videoId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID of video
+        - name : sort-comments
+          in: query
+          required: false
+          schema:
+            type: string
+            example: true
+            default: false
+          description: Sort comments
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Video Title"
+                      description:
+                        type: string
+                        example: "Video Description"
+                      url_thumbnail:
+                        type: string
+                        example: "https://example.com/thumbnail.jpg"
+                      link_video:
+                        type: string
+                        example: "https://example.com/video.mp4"
+                      viewer:
+                        type: integer
+                        example: 1000
+                      total_comment:
+                        type: integer
+                        example: 10
+                      comments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            comment:
+                              type: string
+                              example: "Nice video!"
+                            user_id:
+                              type: string
+                              example: USR00001
+                            user_name:
+                              type: string
+                              example: John Doe
+                            user_profile:
+                              type: string
+                              example: "https://example.com/profile.jpg"
+                            created_at:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+  /videos/comment:
+    post:
+      tags:
+        - videos
+      summary: Create Comment
+      description: Endpoint user for create comment
+      operationId: createComment
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_id:
+                  type: integer
+                  example: 1
+                comment:
+                  type: string
+                  example: "Nice video!"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success add comment
+        '404':
+          description: Video not found  
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+  /videos/category:
+    get:
+      tags:
+        - videos
+      summary: Get all video by content category or waste category
+      description: Enpoint for user get all video by content category or waste category
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "content"
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "tips"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data_video:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: "Video Title"
+                              description:
+                                type: string
+                                example: "Video Description"
+                              url_thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              link_video:
+                                type: string
+                                example: "https://example.com/video.mp4"
+                              viewer:
+                                type: integer
+                                example: 1000
+                              content_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "tips"
+                              waste_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "berbahaya"
+        '404':
+          description: video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+                  
+
+  /approval-tasks:
+    get:
+      tags:
+        - approval tasks 
+      summary: Get all approval tasks
+      description: Get all approval tasks with pagination
+      operationId: getApprovalTasks
+      security:
+        - Bearer: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 10
+            default: 10
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: UT0001
+                        status_accept:
+                          type: string
+                          enum: [accept, reject, need review]
+                          example: need review
+                        point:
+                          type: integer
+                          example: 10
+                        task:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: TSK0001
+                            title:
+                              type: string
+                              example: "Task Title"
+                            start_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            end_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: USR0001
+                            name:
+                              type: string
+                              example: John Doe
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  total_data:
+                    type: integer
+                    example: 1
+                  total_page:
+                    type: integer
+                    example: 1
+  /user-task/{userTaskId}:
+    get:
+      tags:
+        - approval tasks
+      summary: Get user task detail
+      description: Get user task detail
+      operationId: getUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: UT0001
+          description: ID of user task
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      title_task:
+                        type: string
+                        example: "Task 1"
+                      start_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      end_date:
+                        type: string
+                        format: date
+                        example: "2020-01-01"
+                      user_name:
+                        type: string
+                        example: John Doe
+                      images:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            image_url:
+                              type: string
+                              example: "https://example.com/image.png"
+                            uploaded_at:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                      description_image:
+                        type: string
+                        example: "This is a description of image"
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+
+  /approve-tasks/{userTaskId}:
+    put:
+      tags:
+        - approval tasks
+      summary: Approve user task
+      description: Endpoint admin to approve user task
+      operationId: approveUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: UT0001
+          description: ID of user task
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success approved user task
+                  data:
+                    type: string
+                    example: null
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+
+  /reject-tasks/{userTaskId}:
+    put:
+      tags:
+        - approval tasks
+      summary: Reject user task
+      description: Endpoint admin to reject user task
+      operationId: rejectUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: UT0001
+          description: ID of user task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Reason why got rejected
+                  example: Bukti kurang jelas
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success rejected user task
+                  data:
+                    type: string
+                    example: null
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found            
+
+  /user/achievements:
+    get:
+      tags: 
+        - achievements
+      summary: Get user achievements
+      description: Endpoint for user get list achievements
+      operationId: getUserAchievements
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAchievements'
+
+  /about-us/category:
+    get:
+      tags:
+        - about us
+      summary: Get data about us by category name
+      description: Endpoint for user get data about us by category name
+      operationId: getAboutUsCategory
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+            example: perusahaan
+          description: The name of the About us category to retrieve,
+                       valid input (perusahaan, tim, contact_us)
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: string
+                          example: ABS01
+                        category:
+                          type: string
+                          example: perusahaan
+                        title:
+                          type: string
+                          example: Tentang siapa kami
+                        description:
+                          type: string
+                          example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                        images:
+                          type: array
+                          items:
+                            properties:
+                              about_us_id:
+                                type: string
+                                example: ABS01
+                              image_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+        '404':
+          description: Category name not found
+  /leaderboard:
+    get:
+      tags:
+        - leaderboards
+      summary: Get leaderboard
+      description: Endpoint for user or admin get leaderboard
+      operationId: getLeaderboard
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: string
+                          example: USR0001
+                        name:
+                          type: string
+                          example: John Doe
+                        picture_url:
+                          type: string
+                          example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                        point:
+                          type: integer
+                          example: 1000
+                        badge:
+                          type: string
+                          example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+  /homepage:
+    get:
+      tags:
+        - homepage
+      summary: Get homepage
+      description: Endpoint for user get homepage
+      operationId: getHomepage
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: USR0001
+                            name:
+                              type: string
+                              example: John Doe
+                            picture_url:
+                              type: string
+                              example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                            point:
+                              type: integer
+                              example: 1000
+                            badge:
+                              type: string
+                        articles:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: ART0001
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail article
+                              author_name:
+                                type: string
+                                example: John Doe
+                                description: Name of the author
+                              author_profile:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the author
+                              created_at:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                                description: Date and time when the article was created
+                        videos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              url_thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail video
+                              link_video:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/video/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.mp4
+                                description: Link video Youtube
+                              viewer:
+                                type: integer
+                                example: 1000
+                        leaderboard:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: USR0001
+                                description: ID of the user
+                              name:
+                                type: string
+                                example: John Doe
+                              picture_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the user
+                              point:
+                                type: integer
+                                example: 1000
+                                description: Point of the user
+                              badge:
+                                type: string
+                                example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+                                description: Badge of the user
+
+  /articles:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: View all articles with pagination
+      description: Endpoint user or admin to view all articles with pagination.
+      operationId: viewAllArticles
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of articles per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 100
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      articles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            schema:
+                              $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+  
+  /article/search:
+    get:
+      tags:
+        - articles
+      summary: View all articles by keyword
+      description: Endpoint user to view all articles by keyword.
+      operationId: viewAllArticlesByKeyword
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Search by keyword
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by keyword
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/category:
+    get:
+      tags:
+        - articles
+      summary: View all articles by category type and category name
+      description: Endpoint user to view all articles by category type and category name.
+      operationId: viewAllArticlesByCategory
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: waste
+          description: Category Type (waste, content)
+          example: plastik
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Category Name, waste(plastik, besi, kaca, organik, kayu, kertas, baterai, kaleng, elektronik, tekstil, minyak, bola lampu, berbahaya), content(tips, daur ulang, tutorial, edukasi, kampanye)
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/{articleId}/comment:
+    post:
+      tags:
+        - articles
+      summary: Add new comment to article
+      description: Endpoint user to add comment 
+      operationId: addCommentArticle
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  description: User comment
+                  example: Test comment
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: comment added!
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
+
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get all categories for content
+      description: Endpoint user/admin to get data categories 
+      operationId: getCategories
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      waste_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: plastik
+                      content_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: tips
+                    
+  /dashboards:
+    get:
+      tags:
+        - dashboard
+      summary: Get dashboard data
+      description: Endpoint admin to get data dashboard 
+      operationId: getDashboard
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@gmail.com
+        phone_number:
+          type: string
+          example: 089511223344
+        address:
+          type: string
+          example: Jalan Soedirman
+        gender:
+          type: string
+          enum: [laki-laki, perempuan]
+          example: laki-laki
+        birth_date:
+          type: string
+          format: date
+          example: "1990-01-01"
+    UserRegister:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@gmail.com
+        password:
+          type: string
+          example: password@123
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john.doe@gmail.com
+        password:
+          type: string
+          example: password@123
+    Report:
+      type: object
+      properties:
+        reportType:
+          type: string
+          enum: [rubbish, littering]
+          description: Type of the report
+          example: rubbish
+        title:
+          type: string
+          description: Title of the report
+          example: "Rubbish in the park"
+        description:
+          type: string
+          description: Description of the report
+          example: "There is a lot of rubbish in the central park near the playground."
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Multiple images for the report
+          example: ["image1.jpg", "image2.jpg"]
+        wasteType:
+          type: string
+          enum: [organic, inorganic, hazardous]
+          description: Type of waste
+          example: inorganic
+        wasteMaterials:
+          type: array
+          items:
+            type: string
+            enum: [plastic, glass, wood, paper, battery, metal, toxicWaste, hazardousWaste]
+          description: Multiple choice for types of waste materials
+          example: ["plastic", "paper", "battery"]
+        lat:
+          type: number
+          format: float
+          description: Latitude of the location
+          example: -6.200000
+        long:
+          type: number
+          format: float
+          description: Longitude of the location
+          example: 106.816666
+        location:
+          type: string
+          description: General location description
+          example: "Central Park, Jakarta"
+        address:
+          type: string
+          description: Address of the location
+          example: "Jl. Medan Merdeka Selatan, Jakarta"
+        status:
+          type: string
+          enum: [need review, approve, reject]
+          default: need review
+          description: Status of the report
+          example: need review
+    ReportResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the created report
+          example: RPT0006
+        author_id:
+          type: string
+          description: ID of the report author
+          example: USR0003
+        report_type:
+          type: string
+          description: Type of the report
+          example: rubbish
+        title:
+          type: string
+          description: Title of the report
+          example: ""
+        description:
+          type: string
+          description: Description of the report
+          example: Tempat sampah di dekat halte bus sudah penuh dengan sampah.
+        waste_type:
+          type: string
+          description: Type of waste
+          example: sampah basah,sampah kering
+        latitude:
+          type: number
+          format: float
+          description: Latitude coordinate
+          example: -6.1754
+        longitude:
+          type: number
+          format: float
+          description: Longitude coordinate
+          example: 106.8272
+        address:
+          type: string
+          description: Address of the report
+          example: Jl. Sudirman
+        city:
+          type: string
+          description: City of the report
+          example: Jakarta
+        province:
+          type: string
+          description: Province of the report
+          example: DKI Jakarta
+        status:
+          type: string
+          description: Status of the report
+          example: need review
+        waste_materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/WasteMaterial'
+        report_images:
+          type: array
+          items:
+            type: string
+            format: uri
+            description: URL of the report images
+          example:
+            - https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717008205/recything/reports/dpz5ztmx9lo65ivcqbot.jpg
+            - https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717008205/recything/reports/zwk2gotn8tywjewpzkhn.jpg
+        created_at:
+          type: string
+          format: date-time
+          description: Date and time when the report was created
+          example: "2024-05-30T01:43:26.482+07:00"
+    WasteMaterial:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the waste material
+          example: MTR04
+        type:
+          type: string
+          description: Type of the waste material
+          example: kertas
+    Article:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ART0001
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: AD0001
+            name: 
+              type: string
+              example: John Doe
+            image_url:
+              type: string
+              example: http://example.com/image.png
+        title:
+          type: string
+          example: Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab
+        description:
+          type: string
+          example: Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.
+        thumbnail_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
+        waste_categories:
+          type: array
+          items:
+            type: string
+          example: ["elektronik", "berbahaya"]
+        content_categories:
+          type: array
+          items:
+            type: string
+          example: ["edukasi", "kampanye"]
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleSection'
+    ArticleSection:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Apa itu Limbah Elektronik?
+        description:
+          type: string
+          example: Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.
+        image_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
+    Achievement:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        level:
+          type: string
+          enum: [classic, silver, gold, platinum]
+          example: gold
+        target_point:
+          type: integer
+          example: 500
+        badge_url:
+          type: string
+          example: "https://example.com/image.png"
+    Admin:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ADM0001
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        password:
+          type: string
+          example: password@123
+        role:
+          type: string
+          enum: [admin, superadmin]
+          example: admin
+        profile_photo:
+          type: string
+          format: binary
+          example: "profile.jpg"
+    EditAdmin:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        old_password:
+          type: string
+          example: password@123
+        new_password:
+          type: string
+          example: password@123
+        role:
+          type: string
+          enum: [admin, superadmin]
+          example: admin
+        profile_photo:
+          type: string
+          format: binary
+          example: "profile.jpg"
+    AdminResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ADM0001
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        role:
+          type: string
+          enum: [admin, superadmin]
+          example: admin
+        profile_photo:
+          type: string
+          example: "https://example.com/profile.jpg"
+    FAQs:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: FAQ01
+        category:
+          type: string
+          example: profil
+        question:
+          type: string
+          example: Bagaimana cara saya memperbarui informasi profil saya?
+        answer:
+          type: string
+          example: Anda dapat memperbarui informasi profil Anda melalui menu 'Pengaturan Profil' di aplikasi. Klik ikon profil, pilih 'Pengaturan', dan edit informasi yang diperlukan.
+    CustomData:
+      type: object
+      properties:
+        id:
+          type: string
+          example: CDT0001
+        topic:
+          type: string
+          example: Daur Ulang Plastik
+        description:
+          type: string
+          example: Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu.
+        created_at:
+          type: string
+          example: 2024-06-05 23:17:50.484 +0700 +07
+        updated_at:
+          type: string
+          example: 2024-06-05 23:17:50.484 +0700 +07
+    CustomDataInput:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: Daur Ulang Plastik
+        description:
+          type: string
+          example: Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu.
+    UserAchievements:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: ok
+        data:
+          type: object
+          properties:
+            data_achievement:
+              type: array
+              items:
+                $ref: '#/components/schemas/Achievement'
+            data_user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: USR00001
+                name:
+                  type: string
+                  example: John Doe
+                point:
+                  type: integer
+                  example: 1000
+                badge:
+                  type: string
+                  example: "classic"
+            history_user_point:
+              type: array
+              items:
+                type: object
+                properties:
+                  point:
+                    type: integer
+                    example: 100
+                  accepted_at:
+                    type: string
+                    format: date
+                    example: "2020-01-01"
+
+    Dashboard:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                total_user:
+                  type: integer
+                  example: 100
+                addition_user_since_yesterday:
+                  type: integer
+                  example: 10
+            report:
+              type: object
+              properties:
+                total_report:
+                  type: integer
+                  example: 100
+                addition_report_since_yesterday:
+                  type: integer
+                  example: 10
+            challenge:
+              type: object
+              properties:
+                total_challenge:
+                  type: integer
+                  example: 100
+                addition_challenge_since_last_week:
+                  type: integer
+                  example: 10
+            content:
+              type: object
+              properties:
+                total_content:
+                  type: integer
+                  example: 100
+                addition_content_today:
+                  type: integer
+                  example: 10
+            user_achievement:
+              type: object
+              properties:
+                total_user:
+                  type: integer
+                  example: 100
+                classic:
+                  type: integer
+                  example: 10
+                silver:
+                  type: integer
+                  example: 10
+                gold:
+                  type: integer
+                  example: 10
+                platinum:
+                  type: integer
+                  example: 10
+        data_user_by_address:
+          type: array
+          items:
+            type: object
+            properties:
+              city:
+                type: string
+                example: "Jakarta"
+              total_user:
+                type: integer
+                example: 100
+        data_user_by_gender:
+          type: array
+          items:
+            type: object
+            properties:
+              gender:
+                type: string
+                example: laki-laki
+              total_user:
+                type: integer
+                example: 100
+              percentage:
+                type: number
+                example: 50
+        total_report_littering:
+          type: integer
+          example: 100
+        total_report_rubbish:
+          type: integer
+          example: 100
+        data_report_by_waste_rubbish:
+          type: array
+          items:
+            type: object
+            properties:
+              report_type:
+                type: string
+                example: rubbish
+              waste_type:
+                type: string
+                example: plastik
+              total_reports:
+                type: integer
+                example: 40
+              percentage:
+                type: number
+                example: 50
+        data_report_by_waste_littering:
+          type: array
+          items:
+            type: object
+            properties:
+              report_type:
+                type: string
+                example: littering
+              waste_type:
+                type: string
+                example: organic
+              total_reports:
+                type: integer
+                example: 40
+              percentage:
+                type: number
+                example: 50
+        data_report_statistic:
+          type: object
+          properties:
+            report_littering:
+              type: array
+              items:
+                type: object
+                properties:
+                  month: 
+                    type: string
+                    example: Januari
+                  daily_statistic:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                          example: 1
+                        total_reports:
+                          type: integer
+                          example: 10
+            report_rubbish:
+              type: array
+              items:
+                type: object
+                properties:
+                  month: 
+                    type: string
+                    example: Januari
+                  daily_statistic:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                          example: 1
+                        total_reports:
+                          type: integer
+                          example: 10
+        
+
+        

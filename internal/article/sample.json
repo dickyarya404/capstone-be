@@ -1,0 +1,137 @@
+[
+  {
+    "title": "Cara Mendaur Ulang Botol Plastik",
+    "description": "Panduan langkah demi langkah tentang cara mendaur ulang botol plastik di rumah.",
+    "thumbnail_url": "https://example.com/daur-ulang-plastik.jpg",
+    "waste_categories": ["plastik"],
+    "content_categories": ["tutorial"],
+    "sections": [
+      {
+        "title": "Membersihkan dan Menyortir",
+        "description": "Bilas botol, lepaskan label, dan pisahkan berdasarkan jenisnya (PET, HDPE, dll.).",
+        "image_url": "https://example.com/membersihkan-botol.jpg"
+      },
+      {
+        "title": "Meremukkan dan Menyimpan",
+        "description": "Remukkan botol untuk menghemat ruang dan simpan dalam tempat khusus.",
+        "image_url": "https://example.com/meremukkan-botol.jpg"
+      },
+      {
+        "title": "Mengantar atau Dijemput",
+        "description": "Temukan pusat daur ulang terdekat atau jadwalkan layanan penjemputan.",
+        "image_url": "https://example.com/pusat-daur-ulang.jpg"
+      }
+    ]
+  },
+  {
+    "title": "Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab",
+    "description": "Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.",
+    "thumbnail_url": "https://example.com/limbah-elektronik.jpg",
+    "waste_categories": ["elektronik", "berbahaya"],
+    "content_categories": ["edukasi", "kampanye"],
+    "sections": [
+      {
+        "title": "Apa itu Limbah Elektronik?",
+        "description": "Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.",
+        "image_url": "https://example.com/tumpukan-limbah-elektronik.jpg"
+      },
+      {
+        "title": "Komponen Beracun",
+        "description": "Limbah elektronik mengandung zat berbahaya seperti timbal, merkuri, dan kadmium.",
+        "image_url": "https://example.com/simbol-beracun.jpg"
+      },
+      {
+        "title": "Pembuangan yang Benar",
+        "description": "Cari pendaur ulang limbah elektronik bersertifikat atau program pengembalian yang ditawarkan oleh produsen.",
+        "image_url": "https://example.com/daur-ulang-limbah-elektronik.jpg"
+      }
+    ]
+  },
+  {
+    "title": "5 Tips Mengurangi Sampah Plastik dalam Kehidupan Sehari-hari",
+    "description": "Lakukan perubahan kecil untuk dampak besar! Temukan cara mudah untuk mengurangi penggunaan plastik sehari-hari.",
+    "thumbnail_url": "https://example.com/tips-plastik.jpg",
+    "waste_categories": ["plastik"],
+    "content_categories": ["tips"],
+    "sections": [
+      {
+        "title": "Bawa Tas Belanja Sendiri",
+        "description": "Gunakan tas belanja kain yang dapat digunakan kembali saat berbelanja.",
+        "image_url": "https://example.com/tas-belanja-kain.jpg"
+      },
+      {
+        "title": "Hindari Penggunaan Sedotan Plastik",
+        "description": "Pilih sedotan stainless steel, bambu, atau kertas.",
+        "image_url": "https://example.com/sedotan-alternatif.jpg"
+      },
+      {
+        "title": "Bawa Botol Minum Isi Ulang",
+        "description": "Kurangi sampah botol plastik dengan membawa botol minum sendiri.",
+        "image_url": "https://example.com/botol-minum.jpg"
+      },
+      {
+        "title": "Gunakan Wadah Makanan Reusable",
+        "description": "Bawa bekal makan siang dalam wadah yang dapat digunakan kembali.",
+        "image_url": "https://example.com/wadah-reusable.jpg"
+      },
+      {
+        "title": "Pilih Produk dengan Kemasan Ramah Lingkungan",
+        "description": "Cari produk dengan kemasan minimal atau kemasan yang dapat didaur ulang.",
+        "image_url": "https://example.com/kemasan-ramah-lingkungan.jpg"
+      }
+    ]
+  },
+  {
+    "title": "Mengenal Lebih Dekat Proses Daur Ulang Kertas",
+    "description": "Ikuti perjalanan kertas bekas hingga menjadi kertas baru yang siap pakai!",
+    "thumbnail_url": "https://example.com/daur-ulang-kertas.jpg",
+    "waste_categories": ["kertas"],
+    "content_categories": ["daur ulang"],
+    "sections": [
+      {
+        "title": "Pengumpulan dan Pemilahan",
+        "description": "Kertas bekas dikumpulkan dan dipilah berdasarkan jenisnya.",
+        "image_url": "https://example.com/pengumpulan-kertas.jpg"
+      },
+      {
+        "title": "Penghancuran dan Pembuburan",
+        "description": "Kertas dihancurkan dan dicampur dengan air untuk membentuk bubur kertas.",
+        "image_url": "https://example.com/pembuburan-kertas.jpg"
+      },
+      {
+        "title": "Pembersihan dan Pemutihan",
+        "description": "Bubur kertas dibersihkan dari tinta dan kotoran, lalu diputihkan.",
+        "image_url": "https://example.com/pemutihan-kertas.jpg"
+      },
+      {
+        "title": "Pembentukan dan Pengeringan",
+        "description": "Bubur kertas dibentuk menjadi lembaran dan dikeringkan.",
+        "image_url": "https://example.com/pembentukan-kertas.jpg"
+      }
+    ]
+  },
+  {
+    "title": "Kampanye 'Bijak Berplastik' di Sekolah",
+    "description": "Upaya siswa-siswi untuk mengurangi penggunaan plastik di lingkungan sekolah.",
+    "thumbnail_url": "https://example.com/kampanye-plastik.jpg",
+    "waste_categories": ["plastik"],
+    "content_categories": ["kampanye"],
+    "sections": [
+      {
+        "title": "Latar Belakang",
+        "description": "Meningkatnya kesadaran akan bahaya sampah plastik bagi lingkungan.",
+        "image_url": "https://example.com/sampah-plastik.jpg"
+      },
+      {
+        "title": "Kegiatan Kampanye",
+        "description": "Workshop, lomba poster, dan aksi bersih-bersih lingkungan sekolah.",
+        "image_url": "https://example.com/kegiatan-kampanye.jpg"
+      },
+      {
+        "title": "Hasil dan Dampak",
+        "description": "Penurunan signifikan dalam penggunaan plastik di kantin sekolah.",
+        "image_url": "https://example.com/hasil-kampanye.jpg"
+      }
+    ]
+  }
+]

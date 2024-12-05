@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  api-service:
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
+    networks:
+      - api-network
+    depends_on:
+      - mysql-service
+
+  mysql-service:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root@123
+    volumes:
+      - ./database/init.sql:/data/application/init.sql
+      - mysql-volume:/var/lib/mysql
+    command: --init-file /data/application/init.sql
+    ports:
+      - 3306
+    networks:
+      - api-network
+
+volumes:
+  mysql-volume:
+
+networks:
+  api-network:
+    driver: bridge

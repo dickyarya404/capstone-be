@@ -1,0 +1,12 @@
+{
+  "report_type": "rubbish",
+  "title": "",
+  "description": "Tempat sampah di dekat halte bus sudah penuh dengan sampah",
+  "waste_type": "sampah kering",
+  "waste_materials": ["kertas", "besi"],
+  "latitude": -6.1754,
+  "longitude": 106.8272,
+  "address": "Jl. Sudirman",
+  "city": "Jakarta",
+  "province": "DKI Jakarta"
+}

@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS recything_db;

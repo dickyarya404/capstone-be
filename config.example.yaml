@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  jwtsecret: <your_secret>
+
+db:
+  host: <your_host>
+  port: <your_port>
+  user: <your_user>
+  password: <your_password>
+  dbname: <your_dbname>
+
+cloudinary:
+  cloudname: <your_cloudname>
+  apikey: <your_apikey>
+  apisecret: <your_apisecret>
+
+smtp:
+  host: smtp.gmail.com
+  port: 587
+  authemail: <your_authemail>
+  authpassword: <your_authpassword>
+
+openai:
+  apikey: <your_apikey>
+
+youtube:
+  apikey: <your_apikey>

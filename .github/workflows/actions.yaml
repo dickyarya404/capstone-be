@@ -1,0 +1,114 @@
+name: Running Test, Build Image, Push Registry, Deploy to AWS EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  running-test:
+    name: Running Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.22"
+
+      - name: Run Test
+        run: go test -v ./cmd/api/main.go -cover
+
+  build-image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    needs: running-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Image
+        run: docker build -t sawalrever23/recything-be:latest .
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Image
+        run: docker push sawalrever23/recything-be:latest
+
+  deploy-to-aws-ec2:
+    name: Deploy to AWS EC2
+    needs: build-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd projects
+            docker container stop recything-be || true && docker container rm recything-be || true
+            docker container stop mysql-service || true && docker container rm mysql-service || true
+            mkdir /tmp/mysql-volume || true
+
+            docker network create api-network || true
+            docker image rm sawalrever23/recything-be || true
+            docker pull sawalrever23/recything-be:latest
+
+            docker run -itd --name mysql-service \
+            --network api-network \
+            -p 3306:3306 \
+            -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e MYSQL_DATABASE=${{ secrets.DB_NAME }} \
+            -v /tmp/mysql-volume:/var/lib/mysql \
+            mysql:latest
+
+            docker run -itd --name recything-be \
+            -p 80:8080 \
+            --network api-network \
+            --restart on-failure \
+            sawalrever23/recything-be:latest
+
+            touch config.yaml
+            echo "server:" >> config.yaml
+            echo "  port: 8080" >> config.yaml
+            echo "  jwtsecret: ${{ secrets.JWT_SECRET }}" >> config.yaml
+
+            echo "db:" >> config.yaml
+            echo "  host: ${{ secrets.DB_HOST }}" >> config.yaml
+            echo "  port: ${{ secrets.DB_PORT }}" >> config.yaml
+            echo "  user: ${{ secrets.DB_USERNAME }}" >> config.yaml
+            echo "  password: ${{ secrets.DB_PASSWORD }}" >> config.yaml
+            echo "  dbname: ${{ secrets.DB_NAME }}" >> config.yaml
+
+            echo "cloudinary:" >> config.yaml
+            echo "  cloudname: ${{ secrets.CLOUDINARY_CLOUDNAME }}" >> config.yaml
+            echo "  apikey: ${{ secrets.CLOUDINARY_APIKEY }}" >> config.yaml
+            echo "  apisecret: ${{ secrets.CLOUDINARY_APISECRET }}" >> config.yaml
+
+            echo "smtp:" >> config.yaml
+            echo "  host: ${{ secrets.SMTP_HOST }}" >> config.yaml
+            echo "  port: ${{ secrets.SMTP_PORT }}" >> config.yaml
+            echo "  authemail: ${{ secrets.SMTP_EMAIL }}" >> config.yaml
+            echo "  authpassword: ${{ secrets.SMTP_PASSWORD }}" >> config.yaml
+
+            echo "openai:" >> config.yaml
+            echo "  apikey: ${{ secrets.OPENAI_APIKEY }}" >> config.yaml
+
+            echo "youtube:" >> config.yaml
+            echo "  apikey: ${{ secrets.YOUTUBE_APIKEY }}" >> config.yaml
+
+            docker cp config.yaml recything-be:/config.yaml
+            docker container restart recything-be
+            rm config.yaml || true
+
+            sleep 15
+
+            docker exec mysql-service mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_PASSWORD }} -e "SET GLOBAL sql_mode = '';"
+            docker restart recything-be
